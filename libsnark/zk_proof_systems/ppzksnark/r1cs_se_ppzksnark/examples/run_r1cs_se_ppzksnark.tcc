@@ -15,6 +15,8 @@
 #ifndef RUN_R1CS_SE_PPZKSNARK_TCC_
 #define RUN_R1CS_SE_PPZKSNARK_TCC_
 
+#include <iostream>
+#include <fstream>
 #include <sstream>
 #include <type_traits>
 
@@ -61,6 +63,103 @@ bool run_r1cs_se_ppzksnark(const r1cs_example<libff::Fr<ppT> > &example,
     libff::print_header("R1CS SEppzkSNARK Prover");
     r1cs_se_ppzksnark_proof<ppT> proof = r1cs_se_ppzksnark_prover<ppT>(keypair.pk, example.primary_input, example.auxiliary_input);
     printf("\n"); libff::print_indent(); libff::print_mem("after prover");
+
+    std::cout << "PRINTING VERIFICATION KEY" << std::endl;
+	keypair.vk.H.print();
+	keypair.vk.G_alpha.print();
+	keypair.vk.H_beta.print();
+	keypair.vk.G_gamma.print();
+	keypair.vk.H_gamma.print();
+    for(std::size_t i = 0; i < keypair.vk.query.size(); ++i) {
+      keypair.vk.query[i].print();
+    }
+    /*	ofstream myfile4H;
+	myfile4H.open ("verification_key_H");
+	myfile4H << keypair.vk.H;
+	myfile4H.close();
+    
+	ofstream myfile4G_alpha;
+	myfile4G_alpha.open ("verification_key_G_alpha");
+	myfile4G_alpha << keypair.vk.G_alpha;
+	myfile4G_alpha.close();
+    
+    
+	ofstream myfile4H_beta;
+	myfile4H_beta.open ("verification_key_H_beta");
+	myfile4H_beta << keypair.vk.H_beta;
+	myfile4H_beta.close();
+    
+    
+	ofstream myfile4G_gamma;
+	myfile4G_gamma.open ("verification_key_G_gamma");
+	myfile4G_gamma << keypair.vk.G_gamma;
+	myfile4G_gamma.close();
+    
+    
+	ofstream myfile4H_gamma;
+	myfile4H_gamma.open ("verification_key_H_gamma");
+	myfile4H_gamma << keypair.vk.H_gamma;
+	myfile4H_gamma.close();
+    
+    for(std::size_t i = 0; i < keypair.vk.query.size(); ++i) {
+      ofstream myfile4query;
+      myfile4query.open ("verification_key_query_" + std::to_string(i));
+      myfile4query << keypair.vk.query[i];
+      myfile4query.close();
+    }*/
+
+    std::cout << "PRINTING PROOF COORDINATES" << std::endl;
+    proof.A.to_affine_coordinates();
+    proof.A.print_coordinates();
+    proof.B.to_affine_coordinates();
+    proof.B.print_coordinates();
+    proof.C.to_affine_coordinates();
+    proof.C.print_coordinates();
+
+    std::cout << "PRINTING PRIMARY INPUT" << std::endl;
+    for(std::size_t i = 0; i < example.primary_input.size(); ++i) {
+      example.primary_input[i].print();
+      /*
+      ofstream myfile2;
+      myfile2.open ("primary_input_" + std::to_string(i));
+      myfile2 << example.primary_input[i];
+      myfile2.close();
+      */
+    }
+ 
+    //std::cout << "PRINTING PRIMARY INPUT" << std::endl;
+    //std::cout << example.primary_input << std::endl;
+
+
+    std::cout << "PRINTING TEMPLATE VARIABLE AGAIN" << std::endl;
+    std::cout << __PRETTY_FUNCTION__ << std::endl;
+
+    /*
+    ofstream myfile3;
+	myfile3.open ("primary_input");
+	myfile3 << example.primary_input;
+	myfile3.close();
+
+	ofstream myfile4;
+	myfile4.open ("proof");
+	myfile4 << proof;
+	myfile4.close();
+
+	ofstream myfile6;
+	myfile6.open ("proof_point_coordinate_a");
+	myfile6 << proof.A;
+	myfile6.close();
+
+	ofstream myfile7;
+	myfile7.open ("proof_point_coordinate_b");
+	myfile7 << proof.B;
+	myfile7.close();
+
+	ofstream myfile8;
+	myfile8.open ("proof_point_coordinate_c");
+	myfile8 << proof.C;
+	myfile8.close();
+    */
 
     if (test_serialization)
     {

@@ -680,21 +680,21 @@ target_link_libraries(
 file(MAKE_DIRECTORY jsnark_interface)
 
 add_executable(
-  run_ppzksnark
+  run_se_ppzksnark
 
   jsnark_interface/Util.hpp
   jsnark_interface/Util.cpp
   jsnark_interface/CircuitReader.hpp
   jsnark_interface/CircuitReader.cpp
-  jsnark_interface/run_ppzksnark.cpp
+  jsnark_interface/run_se_ppzksnark.cpp
 )
 target_link_libraries(
-  run_ppzksnark
+  run_se_ppzksnark
 
   snark
 )
 
-set_target_properties(run_ppzksnark
+set_target_properties(run_se_ppzksnark
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "jsnark_interface/"
     LIBRARY_OUTPUT_DIRECTORY "jsnark_interface/"
