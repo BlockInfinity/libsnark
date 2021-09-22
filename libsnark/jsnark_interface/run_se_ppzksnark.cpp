@@ -31,6 +31,10 @@ int main(int argc, char **argv) {
 	// Read the circuit, evaluate, and translate constraints
 	CircuitReader reader(argv[1 + inputStartIndex], argv[2 + inputStartIndex], pb);
 	r1cs_constraint_system<FieldT> cs = get_constraint_system_from_gadgetlib2(*pb);
+	const r1cs_variable_assignment<FieldT> full_assignment =
+		get_variable_assignment_from_gadgetlib2(*pb);
+	cs.primary_input_size = reader.getNumInputs() + reader.getNumOutputs();
+	cs.auxiliary_input_size = full_assignment.size() - cs.num_inputs();
 
 	if(strcmp(argv[1], "setup") == 0) {
 		// Generate a key pair.
@@ -89,10 +93,6 @@ int main(int argc, char **argv) {
 		serializationFile2.close();
 
 		// Generate the proof.
-		const r1cs_variable_assignment<FieldT> full_assignment =
-			get_variable_assignment_from_gadgetlib2(*pb);
-		cs.primary_input_size = reader.getNumInputs() + reader.getNumOutputs();
-		cs.auxiliary_input_size = full_assignment.size() - cs.num_inputs();
 		const r1cs_primary_input<FieldT> primary_input(full_assignment.begin(), full_assignment.begin() + cs.num_inputs());
 		const r1cs_auxiliary_input<FieldT> auxiliary_input(full_assignment.begin() + cs.num_inputs(), full_assignment.end());
 		
