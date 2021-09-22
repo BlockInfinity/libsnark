@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
 		serializationFile2.close();
 
 		// Print the verification key.
-		std::cout << "PRINTING VERIFICATION KEY" << std::endl;
+		std::cout << "BEGINNING OF VERIFICATION KEY" << std::endl;
 		keypair.vk.H.print();
 		keypair.vk.G_alpha.print();
 		keypair.vk.H_beta.print();
@@ -57,6 +57,7 @@ int main(int argc, char **argv) {
 		for(std::size_t i = 0; i < keypair.vk.query.size(); ++i) {
 			keypair.vk.query[i].print();
 		}
+		std::cout << "END OF VERIFICATION KEY" << std::endl;
 
 		return 0;
 	}
@@ -90,20 +91,30 @@ int main(int argc, char **argv) {
 		// Generate the proof.
 		const r1cs_variable_assignment<FieldT> full_assignment =
 			get_variable_assignment_from_gadgetlib2(*pb);
+		cs.primary_input_size = reader.getNumInputs() + reader.getNumOutputs();
+		cs.auxiliary_input_size = full_assignment.size() - cs.num_inputs();
 		const r1cs_primary_input<FieldT> primary_input(full_assignment.begin(), full_assignment.begin() + cs.num_inputs());
 		const r1cs_auxiliary_input<FieldT> auxiliary_input(full_assignment.begin() + cs.num_inputs(), full_assignment.end());
 		
 		r1cs_se_ppzksnark_proof<libff::alt_bn128_pp> proof = r1cs_se_ppzksnark_prover<libff::alt_bn128_pp>(keypair.pk, primary_input, auxiliary_input);
 
 		// Print the proof.
-		std::cout << "PRINTING PROOF COORDINATES" << std::endl;
+		std::cout << "BEGINNING OF PROOF COORDINATES" << std::endl;
 		proof.A.to_affine_coordinates();
 		proof.A.print_coordinates();
 		proof.B.to_affine_coordinates();
 		proof.B.print_coordinates();
 		proof.C.to_affine_coordinates();
 		proof.C.print_coordinates();
+		std::cout << "END OF PROOF COORDINATES" << std::endl;
 
+		// Print the primary input.
+		std::cout << "BEGINNING OF PRIMARY INPUT" << std::endl;
+		for(std::size_t i = 0; i < primary_input.size(); ++i) {
+			primary_input[i].print();
+		}
+		std::cout << "END OF PRIMARY INPUT" << std::endl;
+	
 		return 0;
 	}
 
