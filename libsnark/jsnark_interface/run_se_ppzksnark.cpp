@@ -27,6 +27,14 @@ int main(int argc, char **argv) {
 	// argv[1] specifies the operation. Valid values are:
 	// - setup
 	// - generate-proof
+
+	// Determine the file names for the proving key and verification key.
+	std::string pathArithFile = argv[1 + inputStartIndex];
+	std::string arithFileName = pathArithFile.substr(pathArithFile.find_last_of("/\\") + 1);
+	std::string::size_type const p(arithFileName.find_last_of('.'));
+	std::string proofName = arithFileName.substr(0, p);
+	std::string pkFileName = proofName + ".pk";
+	std::string vkFileName = proofName + ".vk";
 	
 	// Read the circuit, evaluate, and translate constraints
 	CircuitReader reader(argv[1 + inputStartIndex], argv[2 + inputStartIndex], pb);
@@ -42,12 +50,12 @@ int main(int argc, char **argv) {
 
 		// Save the key pair to the disk.
 		ofstream serializationFile1;
-		serializationFile1.open("pk");
+		serializationFile1.open(pkFileName);
 		serializationFile1 << keypair.pk;
 		serializationFile1.close();
 
 		ofstream serializationFile2;
-		serializationFile2.open("vk");
+		serializationFile2.open(vkFileName);
 		serializationFile2 << keypair.vk;
 		serializationFile2.close();
 
@@ -73,7 +81,7 @@ int main(int argc, char **argv) {
 		string s1;
 		string line1;
 		ifstream serializationFile1;
-		serializationFile1.open("pk");
+		serializationFile1.open(pkFileName);
 		if(!serializationFile1.is_open()) {
 			cout << "Problem occurred while opening a file." << endl;
 			return -1;
@@ -84,7 +92,7 @@ int main(int argc, char **argv) {
 		string s2;
 		string line2;
 		ifstream serializationFile2;
-		serializationFile2.open("vk");
+		serializationFile2.open(vkFileName);
 		if(!serializationFile2.is_open()) {
 			cout << "Problem occurred while opening a file." << endl;
 			return -1;
